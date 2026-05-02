@@ -1,11 +1,12 @@
 <?php
+session_start();
 include "config.php";
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $email = $_POST["email"];
+    $email = trim($_POST["email"]);
     $password = $_POST["password"];
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email=?");
@@ -13,11 +14,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user["password"])) {
-        $_SESSION["user"] = $user["name"];
-        header("Location: dashboard.php");
+
+        // SESSION PROPRE (IMPORTANT)
+        $_SESSION["user_id"] = $user["id"];
+        $_SESSION["user_name"] = $user["name"];
+        $_SESSION["role"] = $user["role"];
+
+        // REDIRECTION
+        if ($user["role"] === "admin") {
+            header("Location: admin.php");
+        } else {
+            header("Location: dashboard.php");
+        }
         exit();
+
     } else {
-        $error = "Email ou mot de passe incorrect.";
+        $error = "Email ou mot de passe incorrect";
     }
 }
 ?>

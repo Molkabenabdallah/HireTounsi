@@ -1,25 +1,41 @@
 <?php
+session_start();
 include "config.php";
 
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $name     = $_POST["name"];
-    $email    = $_POST["email"];
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $name  = htmlspecialchars(trim($_POST["name"]));
+    $email = htmlspecialchars(trim($_POST["email"]));
+    $password = $_POST["password"];
 
-    $check = $pdo->prepare("SELECT * FROM users WHERE email=?");
-    $check->execute([$email]);
-
-    if ($check->rowCount() > 0) {
-        $message = "Email déjà utilisé. <a href='login.php'>Se connecter</a>";
+    // Vérifier conditions
+    if (!isset($_POST["terms"])) {
+        $message = "Vous devez accepter les conditions.";
+    } elseif (strlen($password) < 6) {
+        $message = "Mot de passe trop court (min 6 caractères)";
     } else {
-        $stmt = $pdo->prepare("INSERT INTO users(name,email,password) VALUES (?,?,?)");
-        $stmt->execute([$name, $email, $password]);
 
-        header("Location: login.php");
-        exit();
+        // Vérifier email existant
+        $check = $pdo->prepare("SELECT id FROM users WHERE email=?");
+        $check->execute([$email]);
+
+        if ($check->rowCount() > 0) {
+            $message = "Email déjà utilisé.";
+        } else {
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            // role par défaut
+            $role = "user";
+
+            $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (?,?,?,?)");
+            $stmt->execute([$name, $email, $hashedPassword, $role]);
+
+            header("Location: login.php");
+            exit();
+        }
     }
 }
 ?>

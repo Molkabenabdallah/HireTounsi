@@ -1,15 +1,15 @@
 <?php
 include "config.php";
 
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     exit();
 }
 
-$userName = htmlspecialchars($_SESSION["user"]);
+$userName = htmlspecialchars($_SESSION["user_name"]);
 // Récupérer les infos complètes de l'utilisateur
 $stmt = $pdo->prepare("SELECT * FROM users WHERE name = ?");
-$stmt->execute([$_SESSION["user"]]);
+$stmt->execute([$_SESSION["user_name"]]);
 $userData = $stmt->fetch();
 $initials = strtoupper(substr($userName, 0, 1));
 $joinDate  = isset($userData['created_at']) ? date('M Y', strtotime($userData['created_at'])) : 'N/A';
