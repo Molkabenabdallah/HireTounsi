@@ -276,7 +276,7 @@ $joinDate  = isset($userData['created_at']) ? date('M Y', strtotime($userData['c
         <span class="nav-icon">🏠</span>
         <span class="nav-label">Tableau de bord</span>
       </a>
-      <a href="#" class="nav-item">
+      <a href="jobs.php" class="nav-item">
         <span class="nav-icon">🔍</span>
         <span class="nav-label">Offres d'emploi</span>
       </a>
