@@ -4,6 +4,12 @@ include "config.php";
 // récupérer les offres
 $stmt = $pdo->query("SELECT * FROM jobs WHERE status='approved' ORDER BY id DESC");
 $jobs = $stmt->fetchAll();
+
+
+;
+
+// Check if user is logged in
+$isLoggedIn = isset($_SESSION["user_id"]);
 ?>
 
 <!DOCTYPE html>
@@ -230,6 +236,7 @@ input[type="range"] {
   content:''; position:absolute; inset:0;
   background:linear-gradient(135deg,rgba(139,92,246,.03) 0%,transparent 60%);
   opacity:0; transition:.25s;
+  pointer-events:none;
 }
 .card:hover { transform:translateY(-4px); border-color:rgba(139,92,246,.4); box-shadow:0 12px 36px rgba(0,0,0,.35); }
 .card:hover::before { opacity:1; }
@@ -347,6 +354,25 @@ input[type="range"] {
   cursor:pointer; transition:.2s; box-shadow:0 4px 18px rgba(139,92,246,.3); margin-top:20px;
 }
 .btn-modal:hover { transform:translateY(-2px); box-shadow:0 8px 26px rgba(139,92,246,.45); }
+
+.btn-manual{
+  width:100%;
+  margin-top:12px;
+  padding:13px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:'Instrument Sans',sans-serif;
+  font-size:14px;
+  transition:.2s;
+}
+
+.btn-manual:hover{
+  border-color:var(--accent);
+  color:var(--text);
+}
 </style>
 </head>
 
@@ -359,7 +385,7 @@ input[type="range"] {
     <li><a href="companies.php">Entreprises</a></li>
     <li><a href="jobs.php" style="color:var(--text)">Offres</a></li>
   </ul>
-  <a href="login.php" class="btn-nav">Connexion</a>
+  <a href="dashboard.php" class="btn-nav">mon compte</a>
 </nav>
 
 <main>
@@ -559,39 +585,141 @@ input[type="range"] {
       <label>Votre CV (PDF, DOCX)</label>
       <input type="file" name="cv" accept=".pdf,.doc,.docx" required>
       <div class="modal-divider"></div>
-      <button class="btn-modal" type="submit">Envoyer ma candidature →</button>
+      <button class="btn-modal" type="submit">importer mon cv</button>
+      <button type="button" class="btn-manual" id="openApplyStep2">
+  Compléter manuellement
+            </button>
     </form>
+  </div>
+</div>
+
+
+
+
+<!-- MODAL ETAPE 2 -->
+<div id="applyModal" class="modal">
+  <div class="modal-content" style="max-width:700px;">
+
+    <div class="modal-header">
+      <span class="modal-title">Finaliser ma candidature</span>
+      <button class="close" id="closeApply">&times;</button>
+    </div>
+
+    <form>
+
+      <label>Lettre de motivation</label>
+      <textarea placeholder="Présentez-vous et expliquez pourquoi ce poste vous intéresse..."></textarea>
+
+      <div class="modal-divider"></div>
+
+      <label>Avez-vous une expérience ?</label>
+
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button type="button" class="btn-modal">Oui</button>
+
+        <button type="button"
+        class="btn-manual">
+        Non
+        </button>
+      </div>
+
+      <label style="margin-top:20px;">Années d'expérience</label>
+
+      <select>
+        <option>Moins d'1 an</option>
+        <option>1 - 3 ans</option>
+        <option>3 - 5 ans</option>
+        <option>Plus de 5 ans</option>
+      </select>
+
+      <label style="margin-top:20px;">Disponibilité</label>
+
+      <input type="text" placeholder="Ex : Immédiatement">
+
+      <button class="btn-modal" style="margin-top:25px;">
+        Soumettre ma candidature
+      </button>
+
+    </form>
+
   </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ── MODALS ── */
-  const jobModal = document.getElementById("jobModal");
-  const cvModal  = document.getElementById("cvModal");
-  const jobInput = document.getElementById("job_id");
+  /* ───────────────── MODALS ───────────────── */
 
-  document.getElementById("openJobModal").addEventListener("click", () => jobModal.classList.add("open"));
-  document.getElementById("closeJob").addEventListener("click",     () => jobModal.classList.remove("open"));
-  document.getElementById("closeCv").addEventListener("click",      () => cvModal.classList.remove("open"));
+  const jobModal    = document.getElementById("jobModal");
+  const cvModal     = document.getElementById("cvModal");
+  const applyModal  = document.getElementById("applyModal");
+  const jobInput    = document.getElementById("job_id");
 
+  /* OPEN JOB MODAL */
+  document.getElementById("openJobModal").addEventListener("click", () => {
+    jobModal.classList.add("open");
+  });
+
+  /* CLOSE JOB MODAL */
+  document.getElementById("closeJob").addEventListener("click", () => {
+    jobModal.classList.remove("open");
+  });
+
+  /* CLOSE CV MODAL */
+  document.getElementById("closeCv").addEventListener("click", () => {
+    cvModal.classList.remove("open");
+  });
+
+  /* CLOSE APPLY MODAL */
+  document.getElementById("closeApply").addEventListener("click", () => {
+    applyModal.classList.remove("open");
+  });
+
+  /* OPEN CV MODAL */
   document.querySelectorAll(".btn-apply").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      jobInput.value = btn.dataset.id;
+
+    btn.addEventListener("click", function(e) {
+
+      e.preventDefault();
+
+      const jobId = this.getAttribute("data-id");
+
+      jobInput.value = jobId;
+
       cvModal.classList.add("open");
+
     });
+
   });
 
+  /* OPEN STEP 2 MODAL */
+  document.getElementById("openApplyStep2").addEventListener("click", () => {
+
+    cvModal.classList.remove("open");
+
+    applyModal.classList.add("open");
+
+  });
+
+  /* CLOSE WHEN CLICK OUTSIDE */
   window.addEventListener("click", (e) => {
-    if (e.target === jobModal) jobModal.classList.remove("open");
-    if (e.target === cvModal)  cvModal.classList.remove("open");
+
+    if (e.target === jobModal) {
+      jobModal.classList.remove("open");
+    }
+
+    if (e.target === cvModal) {
+      cvModal.classList.remove("open");
+    }
+
+    if (e.target === applyModal) {
+      applyModal.classList.remove("open");
+    }
+
   });
 
-  /* ════════════════════════════════
-     FILTRES
-  ════════════════════════════════ */
+  /* ───────────────── FILTRES ───────────────── */
+
   const cards           = document.querySelectorAll(".card[data-title]");
   const searchInput     = document.getElementById("searchInput");
   const salaryRange     = document.getElementById("salaryRange");
@@ -600,92 +728,212 @@ document.addEventListener("DOMContentLoaded", () => {
   const emptyState      = document.getElementById("emptyState");
   const activeFiltersEl = document.getElementById("activeFilters");
 
-  let state = { search:"", cities:[], contracts:[], salary:0 };
+  let state = {
+    search:"",
+    cities:[],
+    contracts:[],
+    salary:0
+  };
 
-  /* Salary */
+  /* SALARY FILTER */
+
   salaryRange.addEventListener("input", () => {
+
     state.salary = parseInt(salaryRange.value);
+
     salaryDisplay.textContent = state.salary === 0
       ? "Tous les salaires"
       : state.salary.toLocaleString("fr-TN") + " TND et +";
+
     applyFilters();
+
   });
 
-  /* City checkboxes */
+  /* CITY FILTER */
+
   document.querySelectorAll(".filter-city").forEach(cb => {
+
     cb.addEventListener("change", () => {
-      state.cities = [...document.querySelectorAll(".filter-city:checked")].map(c => c.value);
+
+      state.cities = [
+        ...document.querySelectorAll(".filter-city:checked")
+      ].map(c => c.value);
+
       applyFilters();
+
     });
+
   });
 
-  /* Contract checkboxes */
+  /* CONTRACT FILTER */
+
   document.querySelectorAll(".filter-contract").forEach(cb => {
+
     cb.addEventListener("change", () => {
-      state.contracts = [...document.querySelectorAll(".filter-contract:checked")].map(c => c.value);
+
+      state.contracts = [
+        ...document.querySelectorAll(".filter-contract:checked")
+      ].map(c => c.value);
+
       applyFilters();
+
     });
+
   });
 
-  /* Search */
+  /* SEARCH */
+
   searchInput.addEventListener("input", () => {
+
     state.search = searchInput.value.toLowerCase().trim();
+
     applyFilters();
+
   });
 
-  /* Reset */
+  /* RESET FILTERS */
+
   document.getElementById("resetFilters").addEventListener("click", () => {
-    state = { search:"", cities:[], contracts:[], salary:0 };
+
+    state = {
+      search:"",
+      cities:[],
+      contracts:[],
+      salary:0
+    };
+
     searchInput.value = "";
+
     salaryRange.value = 0;
+
     salaryDisplay.textContent = "Tous les salaires";
-    document.querySelectorAll(".filter-city, .filter-contract").forEach(cb => cb.checked = false);
+
+    document.querySelectorAll(".filter-city, .filter-contract").forEach(cb => {
+      cb.checked = false;
+    });
+
     applyFilters();
+
   });
+
+  /* APPLY FILTERS */
 
   function applyFilters() {
+
     let visible = 0;
+
     cards.forEach(card => {
+
       const ok =
-        (!state.search   || card.dataset.title.includes(state.search) || card.dataset.company.includes(state.search)) &&
-        (state.cities.length === 0    || state.cities.includes(card.dataset.city)) &&
-        (state.contracts.length === 0 || state.contracts.includes(card.dataset.contract)) &&
-        (parseInt(card.dataset.salary) || 0) >= state.salary;
+
+        (!state.search ||
+          card.dataset.title.includes(state.search) ||
+          card.dataset.company.includes(state.search))
+
+        &&
+
+        (state.cities.length === 0 ||
+          state.cities.includes(card.dataset.city))
+
+        &&
+
+        (state.contracts.length === 0 ||
+          state.contracts.includes(card.dataset.contract))
+
+        &&
+
+        ((parseInt(card.dataset.salary) || 0) >= state.salary);
 
       card.classList.toggle("hidden", !ok);
+
       if (ok) visible++;
+
     });
 
-    resultsCount.innerHTML = `<b>${visible}</b> offre${visible > 1 ? "s" : ""} disponible${visible > 1 ? "s" : ""}`;
-    emptyState.style.display = visible === 0 ? "block" : "none";
+    resultsCount.innerHTML =
+      `<b>${visible}</b> offre${visible > 1 ? "s" : ""} disponible${visible > 1 ? "s" : ""}`;
+
+    emptyState.style.display =
+      visible === 0 ? "block" : "none";
+
     renderChips();
+
   }
+
+  /* FILTER CHIPS */
 
   function renderChips() {
+
     activeFiltersEl.innerHTML = "";
-    state.cities.forEach(city => chip(city, () => {
-      document.querySelector(`.filter-city[value="${city}"]`).checked = false;
-      state.cities = state.cities.filter(c => c !== city);
-      applyFilters();
-    }));
-    state.contracts.forEach(ct => chip(ct, () => {
-      document.querySelector(`.filter-contract[value="${ct}"]`).checked = false;
-      state.contracts = state.contracts.filter(c => c !== ct);
-      applyFilters();
-    }));
-    if (state.salary > 0) chip(`≥ ${state.salary.toLocaleString("fr-TN")} TND`, () => {
-      state.salary = 0; salaryRange.value = 0;
-      salaryDisplay.textContent = "Tous les salaires";
-      applyFilters();
+
+    state.cities.forEach(city => {
+
+      chip(city, () => {
+
+        document.querySelector(`.filter-city[value="${city}"]`).checked = false;
+
+        state.cities = state.cities.filter(c => c !== city);
+
+        applyFilters();
+
+      });
+
     });
+
+    state.contracts.forEach(ct => {
+
+      chip(ct, () => {
+
+        document.querySelector(`.filter-contract[value="${ct}"]`).checked = false;
+
+        state.contracts = state.contracts.filter(c => c !== ct);
+
+        applyFilters();
+
+      });
+
+    });
+
+    if (state.salary > 0) {
+
+      chip(`≥ ${state.salary.toLocaleString("fr-TN")} TND`, () => {
+
+        state.salary = 0;
+
+        salaryRange.value = 0;
+
+        salaryDisplay.textContent = "Tous les salaires";
+
+        applyFilters();
+
+      });
+
+    }
+
   }
 
+  /* CREATE CHIP */
+
   function chip(label, onRemove) {
+
     const el = document.createElement("span");
+
     el.className = "active-filter-chip";
-    el.innerHTML = `${label} <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+
+    el.innerHTML = `
+      ${label}
+      <svg width="10" height="10" viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    `;
+
     el.addEventListener("click", onRemove);
+
     activeFiltersEl.appendChild(el);
+
   }
 
 });

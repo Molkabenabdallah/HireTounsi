@@ -410,13 +410,13 @@ $progress = intval(($completed / $total) * 100);
       <a href="jobs.php" class="nav-item">
         <span class="nav-icon">🔍</span> Offres d'emploi
       </a>
-      <a href="#" class="nav-item">
+      <a href="mes_candidatures.php" class="nav-item">
         <span class="nav-icon">📋</span> Mes candidatures
       </a>
       <a href="#" class="nav-item">
         <span class="nav-icon">🏢</span> Entreprises
       </a>
-      <a href="#" class="nav-item">
+      <a href="talents.php" class="nav-item">
         <span class="nav-icon">👥</span> Talents
       </a>
       <span class="nav-sep">Compte</span>
