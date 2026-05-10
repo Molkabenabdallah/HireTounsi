@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "config.php";
 
 // récupérer les offres
@@ -657,8 +658,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* OPEN JOB MODAL */
   document.getElementById("openJobModal").addEventListener("click", () => {
+
+  <?php if($isLoggedIn): ?>
+
     jobModal.classList.add("open");
-  });
+
+  <?php else: ?>
+
+    window.location.href = "login.php";
+
+  <?php endif; ?>
+
+});
 
   /* CLOSE JOB MODAL */
   document.getElementById("closeJob").addEventListener("click", () => {

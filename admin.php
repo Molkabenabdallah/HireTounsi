@@ -26,6 +26,10 @@ $talents = $pdo->query("SELECT * FROM talents")->fetchAll();
 /* JOBS */
 $jobs = $pdo->query("SELECT * FROM jobs")->fetchAll();
 
+
+/* COMPANIES */
+$companies = $pdo->query("SELECT * FROM companies")->fetchAll();
+
 /* STATS */
 $totalUsers   = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $totalTalents = $pdo->query("SELECT COUNT(*) FROM talents")->fetchColumn();
@@ -327,6 +331,12 @@ tbody tr:hover { background:rgba(255,255,255,.02); }
     <span class="s-icon">💼</span> Offres d'emploi
   </a>
 
+
+
+  <a href="?page=companies" class="<?= $page==='companies'?'active':'' ?>">
+  <span class="s-icon">🏢</span> Entreprises
+</a>
+
   <div class="sidebar-bottom">
     <a href="logout.php">
       <span class="s-icon">🚪</span> Déconnexion
@@ -518,7 +528,90 @@ tbody tr:hover { background:rgba(255,255,255,.02); }
   </div>
   <?php endif; ?>
 
+
+
+
+
+
+  <!-- ─── COMPANIES ─── -->
+<?php elseif($page == "companies"): ?>
+
+  <div class="ph">
+    <h1>Entre<span>prises</span></h1>
+  </div>
+
+  <?php if(empty($companies)): ?>
+    <div class="empty">Aucune entreprise enregistrée.</div>
+  <?php else: ?>
+
+  <div class="items-grid">
+
+    <?php foreach($companies as $c): ?>
+
+    <div class="item-card">
+
+      <div class="ic-top">
+
+        <div class="ic-avatar talent">
+          <?= strtoupper(substr($c["name"],0,2)) ?>
+        </div>
+
+        <div>
+          <div class="ic-name">
+            <?= htmlspecialchars($c["name"]) ?>
+          </div>
+
+          <div class="ic-sub">
+            <?= htmlspecialchars($c["sector"]) ?>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ic-divider"></div>
+
+      <div class="ic-footer">
+
+        <span class="status s-<?= $c['status'] ?>">
+          <span class="sdot"></span>
+          <?= ucfirst($c["status"]) ?>
+        </span>
+
+        <?php if($c["status"] == "pending"): ?>
+
+        <div class="ic-actions">
+
+          <a class="btn btn-green"
+             href="approve_company.php?id=<?= $c['id'] ?>">
+
+            Approuver
+
+          </a>
+
+          <a class="btn btn-red"
+             href="reject_company.php?id=<?= $c['id'] ?>">
+
+            Rejeter
+
+          </a>
+
+        </div>
+
+        <?php endif; ?>
+
+      </div>
+
+    </div>
+
+    <?php endforeach; ?>
+
+  </div>
+
+  <?php endif; ?>
+
 <?php endif; ?>
+
+
 
 </div><!-- /main -->
 
