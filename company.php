@@ -505,9 +505,13 @@ select option { background:var(--s2); }
       <h1>Entreprises <span> Partenaires</span></h1>
       <p>entreprises trouvees</p>
     </div>
-    <button class="btn-create" onclick="openModal()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-      Ajouter votre entreprise
+    <a href="login.php" class="btn-create">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+  Ajouter votre entreprise
+</a>
+      
     </button>
   </div>
 
@@ -520,10 +524,7 @@ select option { background:var(--s2); }
     </svg>
     <h3>Aucune entreprise</h3>
     <p>Vous n'avez pas encore ajouté d'entreprise.</p>
-    <button class="btn-create" onclick="openModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-      Créer ma première entreprise
-    </button>
+    
   </div>
 
   <?php else: ?>
