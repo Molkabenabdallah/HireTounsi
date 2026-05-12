@@ -2,16 +2,17 @@
 session_start();
 include "config.php";
 
-if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
-    exit();
-}
-
 /* =========================
    AJOUT ENTREPRISE
 ========================= */
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // sécurité : vérifier connexion seulement pour ajout
+    if (!isset($_SESSION["user_id"])) {
+        header("Location: login.php");
+        exit();
+    }
 
     $name        = $_POST["name"] ?? "";
     $description = $_POST["description"] ?? "";
@@ -32,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($_FILES["logo"]["name"])) {
 
-        $logo = time() . "_" . $_FILES["logo"]["name"];
+        $logo = time() . "_" . basename($_FILES["logo"]["name"]);
 
         move_uploaded_file(
             $_FILES["logo"]["tmp_name"],
@@ -41,62 +42,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     /* INSERT */
+    $stmt = $pdo->prepare("
+        INSERT INTO companies
+        (
+            user_id,
+            name,
+            sector,
+            description,
+            logo,
+            website,
+            fiscal_number,
+            company_size,
+            country,
+            location,
+            manager_name,
+            manager_phone,
+            manager_email,
+            manager_role,
+            status
+        )
 
-   $stmt = $pdo->prepare("
-INSERT INTO companies
-(
-    user_id,
-    name,
-    sector,
-    description,
-    logo,
-    website,
-    fiscal_number,
-    company_size,
-    country,
-    location,
-    manager_name,
-    manager_phone,
-    manager_email,
-    manager_role,
-    status
-)
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            'pending'
+        )
+    ");
 
-VALUES
-(
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    ?,
-    'pending'
-)
-");
     $stmt->execute([
-    $_SESSION["user_id"],
-    $name,
-    $sector,
-    $description,
-    $logo,
-    $website,
-    $fiscal,
-    $size,
-    $country,
-    $location,
-    $manager_name,
-    $manager_phone,
-    $manager_email,
-    $manager_role
-]);
+        $_SESSION["user_id"],
+        $name,
+        $sector,
+        $description,
+        $logo,
+        $website,
+        $fiscal,
+        $size,
+        $country,
+        $location,
+        $manager_name,
+        $manager_phone,
+        $manager_email,
+        $manager_role
+    ]);
+
     $success = "Entreprise ajoutée avec succès.";
 }
 
@@ -104,13 +106,11 @@ VALUES
    RECUP ENTREPRISES
 ========================= */
 
-$stmt = $pdo->prepare("
+$stmt = $pdo->query("
     SELECT * FROM companies
-    WHERE user_id = ? AND status = 'approved'
+    WHERE status = 'approved'
     ORDER BY id DESC
 ");
-
-$stmt->execute([$_SESSION["user_id"]]);
 
 $companies = $stmt->fetchAll();
 ?>
@@ -505,14 +505,25 @@ select option { background:var(--s2); }
       <h1>Entreprises <span> Partenaires</span></h1>
       <p>entreprises trouvees</p>
     </div>
-    <a href="login.php" class="btn-create">
+    <?php if(isset($_SESSION["user_id"])): ?>
+
+<button class="btn-create" onclick="openModal()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <path d="M12 5v14M5 12h14"/>
+  </svg>
+  Ajouter votre entreprise
+</button>
+
+<?php else: ?>
+
+<a href="login.php" class="btn-create" style="text-decoration:none;">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
     <path d="M12 5v14M5 12h14"/>
   </svg>
   Ajouter votre entreprise
 </a>
-      
-    </button>
+
+<?php endif; ?>
   </div>
 
   <?php if(empty($companies)): ?>
@@ -524,7 +535,10 @@ select option { background:var(--s2); }
     </svg>
     <h3>Aucune entreprise</h3>
     <p>Vous n'avez pas encore ajouté d'entreprise.</p>
-    
+    <button class="btn-create" onclick="openModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Créer ma première entreprise
+    </button>
   </div>
 
   <?php else: ?>

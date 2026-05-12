@@ -280,7 +280,7 @@ main {
       <h2>Répertoire des <span>Talents Tunisiens</span></h2>
       <p>Découvrez et connectez-vous avec des profils qualifiés</p>
     </div>
-    <a href="add_profile.php" class="btn-add">
+    <a href="add_talent.php" class="btn-add">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
       Ajouter profil
     </a>
