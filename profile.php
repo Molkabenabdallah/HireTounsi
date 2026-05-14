@@ -13,6 +13,31 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id=?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
+
+
+
+
+
+$profilePhoto = !empty($user['profile_photo']) ? "uploads/" . $user['profile_photo'] : null;
+$initials = strtoupper(substr($user['name'],0,1));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $initials = strtoupper(substr($user['name'],0,1));
 ?>
 <!DOCTYPE html>
@@ -169,12 +194,28 @@ body::before {
   background:linear-gradient(90deg,var(--accent),var(--a2));
 }
 .avatar {
-  width:80px; height:80px; border-radius:20px;
-  background:linear-gradient(135deg,var(--accent),#7c3aed);
-  display:flex; align-items:center; justify-content:center;
-  font-weight:900; font-size:28px; font-family:'Cabinet Grotesk',sans-serif;
+  width:80px;
+  height:80px;
+  border-radius:20px;
+  overflow:hidden; /* important */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:28px;
+  font-family:'Cabinet Grotesk',sans-serif;
   margin:0 auto 14px;
   box-shadow:0 0 0 3px var(--s2),0 0 0 5px rgba(139,92,246,.3);
+}
+
+
+
+
+
+.avatar img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 .av-name {
   font-family:'Cabinet Grotesk',sans-serif;
@@ -348,7 +389,30 @@ body::before {
 
       <!-- Avatar card -->
       <div class="card avatar-card">
-        <div class="avatar"><?= $initials ?></div>
+
+
+
+
+
+
+
+
+       <div class="avatar">
+  <?php if ($profilePhoto): ?>
+    <img src="<?= htmlspecialchars($profilePhoto) ?>" alt="Profile photo">
+  <?php else: ?>
+    <?= $initials ?>
+  <?php endif; ?>
+</div>
+
+
+
+
+
+
+
+
+
         <div class="av-name"><?= htmlspecialchars($user['name']) ?></div>
         <div class="av-title"><?= htmlspecialchars($user['job_title'] ?: 'Aucun titre') ?></div>
         <div class="av-email"><?= htmlspecialchars($user['email']) ?></div>

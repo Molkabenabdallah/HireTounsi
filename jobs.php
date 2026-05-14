@@ -6,8 +6,13 @@ include "config.php";
 $stmt = $pdo->query("SELECT * FROM jobs WHERE status='approved' ORDER BY id DESC");
 $jobs = $stmt->fetchAll();
 
-
-;
+// entreprises approuvées de l'utilisateur connecté
+$userCompanies = [];
+if (isset($_SESSION["user_id"])) {
+    $compStmt = $pdo->prepare("SELECT id, name FROM companies WHERE user_id = ? AND status = 'approved'");
+    $compStmt->execute([$_SESSION["user_id"]]);
+    $userCompanies = $compStmt->fetchAll();
+}
 
 // Check if user is logged in
 $isLoggedIn = isset($_SESSION["user_id"]);
@@ -374,6 +379,239 @@ input[type="range"] {
   border-color:var(--accent);
   color:var(--text);
 }
+
+/* ═════════ JOB STEPS MODAL ═════════ */
+.job-steps-modal{
+  max-width:760px;
+  padding:26px;
+}
+
+.steps-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.steps-label{
+  font-size:12px;
+  color:var(--muted2);
+}
+
+.steps-progress{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:18px 0 28px;
+}
+
+.step-line{
+  height:3px;
+  border-radius:20px;
+  background:#26263b;
+}
+
+.step-line.active{
+  background:var(--accent);
+}
+
+.job-step{
+  display:none;
+}
+
+.job-step.active{
+  display:block;
+}
+
+.step-title{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:32px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.step-subtitle{
+  color:var(--muted);
+  margin-bottom:28px;
+  font-size:14px;
+}
+
+.choice-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:24px;
+}
+
+.choice-pill input{
+  display:none;
+}
+
+.choice-pill span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  transition:.2s;
+  font-size:13px;
+}
+
+.choice-pill input:checked + span{
+  border-color:var(--accent);
+  background:rgba(139,92,246,.12);
+  color:#c4b5fd;
+}
+
+.double-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.company-choice-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:24px;
+}
+
+.company-box,
+.apply-card{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  cursor:pointer;
+  transition:.2s;
+  background:var(--surface);
+}
+
+.company-box:hover,
+.apply-card:hover{
+  border-color:rgba(139,92,246,.4);
+}
+
+.company-box input,
+.apply-card input{
+  margin-bottom:12px;
+}
+
+.company-box h4,
+.apply-card h4{
+  margin-bottom:6px;
+  font-size:14px;
+}
+
+.company-box p,
+.apply-card p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.steps-footer{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+
+.btn-step-back{
+  padding:12px 22px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+}
+
+.btn-step-next,
+.btn-step-submit{
+  padding:12px 26px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--accent),#7c3aed);
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+
+@media(max-width:700px){
+  .double-grid,
+  .company-choice-grid{
+    grid-template-columns:1fr;
+  }
+  .step-title{
+    font-size:24px;
+  }
+}
+
+.card-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+
+.btn-details{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:8px 14px;
+  border-radius:9px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn-details:hover{
+  border-color:var(--accent);
+  color:#fff;
+  background:rgba(139,92,246,.1);
+}
+
+.btn-apply{
+  flex:1;
+  justify-content:center;
+}
+
+/* company select in modal */
+.company-select-wrap {
+  margin-bottom:16px;
+}
+.company-select-wrap select {
+  width:100%;
+  padding:12px 14px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'Instrument Sans',sans-serif;
+  font-size:14px;
+  outline:none;
+  cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7890' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+.company-select-wrap select:focus {
+  border-color:rgba(139,92,246,.6);
+  box-shadow:0 0 0 3px rgba(139,92,246,.1);
+}
+.company-hint {
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:16px;
+}
 </style>
 </head>
 
@@ -528,10 +766,22 @@ input[type="range"] {
 
           <div class="card-divider"></div>
 
-          <button class="btn-apply" data-id="<?= $job['id'] ?>">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
-            Postuler
-          </button>
+          <div class="card-actions">
+            <a href="job_details.php?id=<?= $job['id'] ?>" class="btn-details">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              Détails
+            </a>
+            <button class="btn-apply" data-id="<?= $job['id'] ?>">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 2 11 13"/>
+                <path d="M22 2 15 22l-4-9-9-4 20-7z"/>
+              </svg>
+              Postuler
+            </button>
+          </div>
         </div>
       <?php endforeach; ?>
 
@@ -544,32 +794,168 @@ input[type="range"] {
   </div>
 </main>
 
-<!-- MODAL PUBLIER -->
+<!-- ═══════════════════════════════════ -->
+<!-- MODAL PUBLIER OFFRE MULTI ETAPES -->
+<!-- ═══════════════════════════════════ -->
 <div id="jobModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="modal-title">Publier une offre</span>
+  <div class="modal-content job-steps-modal">
+    <!-- HEADER -->
+    <div class="steps-top">
+      <div class="steps-label">A propos de l'offre</div>
       <button class="close" id="closeJob">&times;</button>
     </div>
+
+    <!-- PROGRESS -->
+    <div class="steps-progress">
+      <div class="step-line active"></div>
+      <div class="step-line"></div>
+      <div class="step-line"></div>
+      <div class="step-line"></div>
+    </div>
+
     <form action="save_job.php" method="POST">
-      <label>Titre du poste</label>
-      <input name="title" placeholder="Ex : Développeur Full-Stack" required>
-      <label>Entreprise</label>
-      <input name="company" placeholder="Nom de l'entreprise" required>
-      <label>Type de contrat</label>
-      <select name="contract_type">
-        <option value="">Choisir…</option>
-        <option>CDI</option><option>CDD</option>
-        <option>Freelance</option><option>Stage</option><option>Temps partiel</option>
-      </select>
-      <label>Salaire (TND)</label>
-      <input name="salary" placeholder="Ex : 2500">
-      <label>Ville</label>
-      <input name="city" placeholder="Ex : Tunis, Sfax…">
-      <label>Description</label>
-      <textarea name="description" placeholder="Décrivez le poste, les missions…"></textarea>
-      <div class="modal-divider"></div>
-      <button class="btn-modal" type="submit">Publier l'offre →</button>
+
+      <!-- ═════════ STEP 1 ═════════ -->
+      <div class="job-step active">
+        <h2 class="step-title">A propos de l'offre</h2>
+        <p class="step-subtitle">Fournissez les informations de base sur le poste</p>
+        <label>Intitulé du poste</label>
+        <input type="text" name="title" placeholder="Commercial BtoB" required>
+        <label>Description du poste</label>
+        <textarea name="description" placeholder="Décrivez le poste..." style="height:180px;" required></textarea>
+      </div>
+
+      <!-- ═════════ STEP 2 ═════════ -->
+      <div class="job-step">
+        <h2 class="step-title">Type et Budget</h2>
+        <p class="step-subtitle">Spécifiez le type de poste et les informations salariales</p>
+
+        <label>Type de contrat</label>
+        <div class="choice-grid">
+          <label class="choice-pill">
+            <input type="radio" name="contract_type" value="CDI">
+            <span>CDI</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="contract_type" value="CDD">
+            <span>CDD</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="contract_type" value="Freelance">
+            <span>Freelance</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="contract_type" value="Stage">
+            <span>Stage / PFE</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="contract_type" value="Temps partiel">
+            <span>Temps partiel</span>
+          </label>
+        </div>
+
+        <div class="double-grid">
+          <div>
+            <label>Catégorie</label>
+            <select name="category">
+              <option>Développement</option>
+              <option>Marketing</option>
+              <option>Design</option>
+              <option>Vente & Commercial</option>
+              <option>Finance</option>
+            </select>
+          </div>
+          <div>
+            <label>Lieu</label>
+            <input type="text" name="city" placeholder="Tunis">
+          </div>
+        </div>
+
+        <div class="double-grid">
+          <div>
+            <label>Salaire min (TND)</label>
+            <input type="number" name="salary" placeholder="1400">
+          </div>
+          <div>
+            <label>Salaire max (TND)</label>
+            <input type="number" name="salary_max" placeholder="2000">
+          </div>
+        </div>
+
+        <label>Niveau d'expérience</label>
+        <div class="choice-grid">
+          <label class="choice-pill">
+            <input type="radio" name="experience_level" value="Junior">
+            <span>Junior</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="experience_level" value="Intermédiaire">
+            <span>Intermédiaire</span>
+          </label>
+          <label class="choice-pill">
+            <input type="radio" name="experience_level" value="Senior">
+            <span>Senior</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ═════════ STEP 3 ═════════ -->
+      <div class="job-step">
+        <h2 class="step-title">Info entreprise</h2>
+        <p class="step-subtitle">Parlez-nous de votre entreprise</p>
+
+        <?php if(!empty($userCompanies)): ?>
+        <div class="company-select-wrap">
+          <label>Votre entreprise</label>
+          <select name="company_id" id="companySelect">
+            <option value="">-- Choisir une entreprise --</option>
+            <?php foreach($userCompanies as $comp): ?>
+            <option value="<?= $comp['id'] ?>"><?= htmlspecialchars($comp['name']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <p class="company-hint">Ou saisissez manuellement ci-dessous si vous recrutez pour une autre structure.</p>
+        <?php endif; ?>
+
+        <label>Nom de l'entreprise *</label>
+        <input type="text" name="company" placeholder="Nom de l'entreprise" required>
+      </div>
+
+      <!-- ═════════ STEP 4 ═════════ -->
+      <div class="job-step">
+        <h2 class="step-title">Paramètres de l'offre</h2>
+        <p class="step-subtitle">Définissez comment les candidats postulent</p>
+
+        <div class="apply-methods">
+          <label class="apply-card">
+            <input type="radio" name="external_apply" value="0" checked>
+            <div>
+              <h4>Sur HireTounsi</h4>
+              <p>Les candidats postulent directement sur la plateforme</p>
+            </div>
+          </label>
+          <label class="apply-card">
+            <input type="radio" name="external_apply" value="1">
+            <div>
+              <h4>Site externe</h4>
+              <p>Les candidats seront redirigés vers votre site</p>
+            </div>
+          </label>
+        </div>
+
+        <div id="externalUrlBox" style="display:none;">
+          <label>URL de candidature</label>
+          <input type="url" name="external_url" placeholder="https://...">
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="steps-footer">
+        <button type="button" class="btn-step-back" id="prevStep">Retour</button>
+        <button type="button" class="btn-step-next" id="nextStep">Suivant</button>
+        <button type="submit" class="btn-step-submit" id="submitJob" style="display:none;">Publier l'offre</button>
+      </div>
+
     </form>
   </div>
 </div>
@@ -587,367 +973,279 @@ input[type="range"] {
       <input type="file" name="cv" accept=".pdf,.doc,.docx" required>
       <div class="modal-divider"></div>
       <button class="btn-modal" type="submit">importer mon cv</button>
-      <button type="button" class="btn-manual" id="openApplyStep2">
-  Compléter manuellement
-            </button>
+      <button type="button" class="btn-manual" id="openApplyStep2">Compléter manuellement</button>
     </form>
   </div>
 </div>
 
-
-
-
 <!-- MODAL ETAPE 2 -->
 <div id="applyModal" class="modal">
   <div class="modal-content" style="max-width:700px;">
-
     <div class="modal-header">
       <span class="modal-title">Finaliser ma candidature</span>
       <button class="close" id="closeApply">&times;</button>
     </div>
-
     <form>
-
       <label>Lettre de motivation</label>
       <textarea placeholder="Présentez-vous et expliquez pourquoi ce poste vous intéresse..."></textarea>
-
       <div class="modal-divider"></div>
-
       <label>Avez-vous une expérience ?</label>
-
       <div style="display:flex;gap:10px;margin-top:10px;">
         <button type="button" class="btn-modal">Oui</button>
-
-        <button type="button"
-        class="btn-manual">
-        Non
-        </button>
+        <button type="button" class="btn-manual">Non</button>
       </div>
-
       <label style="margin-top:20px;">Années d'expérience</label>
-
       <select>
         <option>Moins d'1 an</option>
         <option>1 - 3 ans</option>
         <option>3 - 5 ans</option>
         <option>Plus de 5 ans</option>
       </select>
-
       <label style="margin-top:20px;">Disponibilité</label>
-
       <input type="text" placeholder="Ex : Immédiatement">
-
-      <button class="btn-modal" style="margin-top:25px;">
-        Soumettre ma candidature
-      </button>
-
+      <button class="btn-modal" style="margin-top:25px;">Soumettre ma candidature</button>
     </form>
-
   </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+  const isLoggedIn = <?= $isLoggedIn ? 'true' : 'false' ?>;
 
-  /* ───────────────── MODALS ───────────────── */
+  document.addEventListener("DOMContentLoaded", () => {
 
-  const jobModal    = document.getElementById("jobModal");
-  const cvModal     = document.getElementById("cvModal");
-  const applyModal  = document.getElementById("applyModal");
-  const jobInput    = document.getElementById("job_id");
+    /* ───────────────── MODALS ───────────────── */
+    const jobModal    = document.getElementById("jobModal");
+    const cvModal     = document.getElementById("cvModal");
+    const applyModal  = document.getElementById("applyModal");
+    const jobInput    = document.getElementById("job_id");
 
-  /* OPEN JOB MODAL */
-  document.getElementById("openJobModal").addEventListener("click", () => {
-
-  <?php if($isLoggedIn): ?>
-
-    jobModal.classList.add("open");
-
-  <?php else: ?>
-
-    window.location.href = "login.php";
-
-  <?php endif; ?>
-
-});
-
-  /* CLOSE JOB MODAL */
-  document.getElementById("closeJob").addEventListener("click", () => {
-    jobModal.classList.remove("open");
-  });
-
-  /* CLOSE CV MODAL */
-  document.getElementById("closeCv").addEventListener("click", () => {
-    cvModal.classList.remove("open");
-  });
-
-  /* CLOSE APPLY MODAL */
-  document.getElementById("closeApply").addEventListener("click", () => {
-    applyModal.classList.remove("open");
-  });
-
-  /* OPEN CV MODAL */
-  document.querySelectorAll(".btn-apply").forEach(btn => {
-
-    btn.addEventListener("click", function(e) {
-
-      e.preventDefault();
-
-      const jobId = this.getAttribute("data-id");
-
-      jobInput.value = jobId;
-
-      cvModal.classList.add("open");
-
+    /* OPEN JOB MODAL */
+    document.getElementById("openJobModal").addEventListener("click", () => {
+      <?php if($isLoggedIn): ?>
+        jobModal.classList.add("open");
+      <?php else: ?>
+        window.location.href = "login.php";
+      <?php endif; ?>
     });
 
-  });
-
-  /* OPEN STEP 2 MODAL */
-  document.getElementById("openApplyStep2").addEventListener("click", () => {
-
-    cvModal.classList.remove("open");
-
-    applyModal.classList.add("open");
-
-  });
-
-  /* CLOSE WHEN CLICK OUTSIDE */
-  window.addEventListener("click", (e) => {
-
-    if (e.target === jobModal) {
+    /* CLOSE JOB MODAL */
+    document.getElementById("closeJob").addEventListener("click", () => {
       jobModal.classList.remove("open");
-    }
+    });
 
-    if (e.target === cvModal) {
+    /* CLOSE CV MODAL */
+    document.getElementById("closeCv").addEventListener("click", () => {
       cvModal.classList.remove("open");
-    }
+    });
 
-    if (e.target === applyModal) {
+    /* CLOSE APPLY MODAL */
+    document.getElementById("closeApply").addEventListener("click", () => {
       applyModal.classList.remove("open");
-    }
-
-  });
-
-  /* ───────────────── FILTRES ───────────────── */
-
-  const cards           = document.querySelectorAll(".card[data-title]");
-  const searchInput     = document.getElementById("searchInput");
-  const salaryRange     = document.getElementById("salaryRange");
-  const salaryDisplay   = document.getElementById("salaryDisplay");
-  const resultsCount    = document.getElementById("resultsCount");
-  const emptyState      = document.getElementById("emptyState");
-  const activeFiltersEl = document.getElementById("activeFilters");
-
-  let state = {
-    search:"",
-    cities:[],
-    contracts:[],
-    salary:0
-  };
-
-  /* SALARY FILTER */
-
-  salaryRange.addEventListener("input", () => {
-
-    state.salary = parseInt(salaryRange.value);
-
-    salaryDisplay.textContent = state.salary === 0
-      ? "Tous les salaires"
-      : state.salary.toLocaleString("fr-TN") + " TND et +";
-
-    applyFilters();
-
-  });
-
-  /* CITY FILTER */
-
-  document.querySelectorAll(".filter-city").forEach(cb => {
-
-    cb.addEventListener("change", () => {
-
-      state.cities = [
-        ...document.querySelectorAll(".filter-city:checked")
-      ].map(c => c.value);
-
-      applyFilters();
-
     });
 
-  });
-
-  /* CONTRACT FILTER */
-
-  document.querySelectorAll(".filter-contract").forEach(cb => {
-
-    cb.addEventListener("change", () => {
-
-      state.contracts = [
-        ...document.querySelectorAll(".filter-contract:checked")
-      ].map(c => c.value);
-
-      applyFilters();
-
+    /* OPEN CV MODAL */
+    document.querySelectorAll(".btn-apply").forEach(btn => {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const jobId = this.getAttribute("data-id");
+        if (!isLoggedIn) {
+          window.location.href = "login.php";
+          return;
+        }
+        jobInput.value = jobId;
+        cvModal.classList.add("open");
+      });
     });
 
-  });
+    /* OPEN STEP 2 MODAL */
+    document.getElementById("openApplyStep2").addEventListener("click", () => {
+      cvModal.classList.remove("open");
+      applyModal.classList.add("open");
+    });
 
-  /* SEARCH */
+    /* CLOSE WHEN CLICK OUTSIDE */
+    window.addEventListener("click", (e) => {
+      if (e.target === jobModal) jobModal.classList.remove("open");
+      if (e.target === cvModal) cvModal.classList.remove("open");
+      if (e.target === applyModal) applyModal.classList.remove("open");
+    });
 
-  searchInput.addEventListener("input", () => {
+    /* ───────────────── FILTRES ───────────────── */
+    const cards           = document.querySelectorAll(".card[data-title]");
+    const searchInput     = document.getElementById("searchInput");
+    const salaryRange     = document.getElementById("salaryRange");
+    const salaryDisplay   = document.getElementById("salaryDisplay");
+    const resultsCount    = document.getElementById("resultsCount");
+    const emptyState      = document.getElementById("emptyState");
+    const activeFiltersEl = document.getElementById("activeFilters");
 
-    state.search = searchInput.value.toLowerCase().trim();
-
-    applyFilters();
-
-  });
-
-  /* RESET FILTERS */
-
-  document.getElementById("resetFilters").addEventListener("click", () => {
-
-    state = {
+    let state = {
       search:"",
       cities:[],
       contracts:[],
       salary:0
     };
 
-    searchInput.value = "";
-
-    salaryRange.value = 0;
-
-    salaryDisplay.textContent = "Tous les salaires";
-
-    document.querySelectorAll(".filter-city, .filter-contract").forEach(cb => {
-      cb.checked = false;
+    /* SALARY FILTER */
+    salaryRange.addEventListener("input", () => {
+      state.salary = parseInt(salaryRange.value);
+      salaryDisplay.textContent = state.salary === 0
+        ? "Tous les salaires"
+        : state.salary.toLocaleString("fr-TN") + " TND et +";
+      applyFilters();
     });
 
-    applyFilters();
-
-  });
-
-  /* APPLY FILTERS */
-
-  function applyFilters() {
-
-    let visible = 0;
-
-    cards.forEach(card => {
-
-      const ok =
-
-        (!state.search ||
-          card.dataset.title.includes(state.search) ||
-          card.dataset.company.includes(state.search))
-
-        &&
-
-        (state.cities.length === 0 ||
-          state.cities.includes(card.dataset.city))
-
-        &&
-
-        (state.contracts.length === 0 ||
-          state.contracts.includes(card.dataset.contract))
-
-        &&
-
-        ((parseInt(card.dataset.salary) || 0) >= state.salary);
-
-      card.classList.toggle("hidden", !ok);
-
-      if (ok) visible++;
-
-    });
-
-    resultsCount.innerHTML =
-      `<b>${visible}</b> offre${visible > 1 ? "s" : ""} disponible${visible > 1 ? "s" : ""}`;
-
-    emptyState.style.display =
-      visible === 0 ? "block" : "none";
-
-    renderChips();
-
-  }
-
-  /* FILTER CHIPS */
-
-  function renderChips() {
-
-    activeFiltersEl.innerHTML = "";
-
-    state.cities.forEach(city => {
-
-      chip(city, () => {
-
-        document.querySelector(`.filter-city[value="${city}"]`).checked = false;
-
-        state.cities = state.cities.filter(c => c !== city);
-
+    /* CITY FILTER */
+    document.querySelectorAll(".filter-city").forEach(cb => {
+      cb.addEventListener("change", () => {
+        state.cities = [...document.querySelectorAll(".filter-city:checked")].map(c => c.value);
         applyFilters();
-
       });
-
     });
 
-    state.contracts.forEach(ct => {
-
-      chip(ct, () => {
-
-        document.querySelector(`.filter-contract[value="${ct}"]`).checked = false;
-
-        state.contracts = state.contracts.filter(c => c !== ct);
-
+    /* CONTRACT FILTER */
+    document.querySelectorAll(".filter-contract").forEach(cb => {
+      cb.addEventListener("change", () => {
+        state.contracts = [...document.querySelectorAll(".filter-contract:checked")].map(c => c.value);
         applyFilters();
-
       });
-
     });
 
-    if (state.salary > 0) {
+    /* SEARCH */
+    searchInput.addEventListener("input", () => {
+      state.search = searchInput.value.toLowerCase().trim();
+      applyFilters();
+    });
 
-      chip(`≥ ${state.salary.toLocaleString("fr-TN")} TND`, () => {
+    /* RESET FILTERS */
+    document.getElementById("resetFilters").addEventListener("click", () => {
+      state = { search:"", cities:[], contracts:[], salary:0 };
+      searchInput.value = "";
+      salaryRange.value = 0;
+      salaryDisplay.textContent = "Tous les salaires";
+      document.querySelectorAll(".filter-city, .filter-contract").forEach(cb => { cb.checked = false; });
+      applyFilters();
+    });
 
-        state.salary = 0;
-
-        salaryRange.value = 0;
-
-        salaryDisplay.textContent = "Tous les salaires";
-
-        applyFilters();
-
+    /* APPLY FILTERS */
+    function applyFilters() {
+      let visible = 0;
+      cards.forEach(card => {
+        const ok =
+          (!state.search || card.dataset.title.includes(state.search) || card.dataset.company.includes(state.search))
+          && (state.cities.length === 0 || state.cities.includes(card.dataset.city))
+          && (state.contracts.length === 0 || state.contracts.includes(card.dataset.contract))
+          && ((parseInt(card.dataset.salary) || 0) >= state.salary);
+        card.classList.toggle("hidden", !ok);
+        if (ok) visible++;
       });
-
+      resultsCount.innerHTML = `<b>${visible}</b> offre${visible > 1 ? "s" : ""} disponible${visible > 1 ? "s" : ""}`;
+      emptyState.style.display = visible === 0 ? "block" : "none";
+      renderChips();
     }
 
+    /* FILTER CHIPS */
+    function renderChips() {
+      activeFiltersEl.innerHTML = "";
+      state.cities.forEach(city => {
+        chip(city, () => {
+          document.querySelector(`.filter-city[value="${city}"]`).checked = false;
+          state.cities = state.cities.filter(c => c !== city);
+          applyFilters();
+        });
+      });
+      state.contracts.forEach(ct => {
+        chip(ct, () => {
+          document.querySelector(`.filter-contract[value="${ct}"]`).checked = false;
+          state.contracts = state.contracts.filter(c => c !== ct);
+          applyFilters();
+        });
+      });
+      if (state.salary > 0) {
+        chip(`≥ ${state.salary.toLocaleString("fr-TN")} TND`, () => {
+          state.salary = 0;
+          salaryRange.value = 0;
+          salaryDisplay.textContent = "Tous les salaires";
+          applyFilters();
+        });
+      }
+    }
+
+    /* CREATE CHIP */
+    function chip(label, onRemove) {
+      const el = document.createElement("span");
+      el.className = "active-filter-chip";
+      el.innerHTML = `${label}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
+      el.addEventListener("click", onRemove);
+      activeFiltersEl.appendChild(el);
+    }
+  });
+
+  /* ═════════ JOB STEPS ═════════ */
+  const steps = document.querySelectorAll(".job-step");
+  const lines = document.querySelectorAll(".step-line");
+  const nextBtn = document.getElementById("nextStep");
+  const prevBtn = document.getElementById("prevStep");
+  const submitBtn = document.getElementById("submitJob");
+  let currentStep = 0;
+
+  function updateSteps(){
+    steps.forEach((step,index) => {
+      step.classList.toggle("active", index === currentStep);
+    });
+    lines.forEach((line,index) => {
+      line.classList.toggle("active", index <= currentStep);
+    });
+    prevBtn.style.visibility = currentStep === 0 ? "hidden" : "visible";
+    if(currentStep === steps.length - 1){
+      nextBtn.style.display = "none";
+      submitBtn.style.display = "inline-flex";
+    }else{
+      nextBtn.style.display = "inline-flex";
+      submitBtn.style.display = "none";
+    }
   }
 
-  /* CREATE CHIP */
+  nextBtn.addEventListener("click", () => {
+    if(currentStep < steps.length - 1){
+      currentStep++;
+      updateSteps();
+    }
+  });
 
-  function chip(label, onRemove) {
+  prevBtn.addEventListener("click", () => {
+    if(currentStep > 0){
+      currentStep--;
+      updateSteps();
+    }
+  });
 
-    const el = document.createElement("span");
+  updateSteps();
 
-    el.className = "active-filter-chip";
+  /* EXTERNAL URL */
+  document.querySelectorAll('input[name="external_apply"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+      document.getElementById("externalUrlBox").style.display =
+        radio.value === "1" && radio.checked ? "block" : "none";
+    });
+  });
 
-    el.innerHTML = `
-      ${label}
-      <svg width="10" height="10" viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="3">
-        <path d="M18 6 6 18M6 6l12 12"/>
-      </svg>
-    `;
-
-    el.addEventListener("click", onRemove);
-
-    activeFiltersEl.appendChild(el);
-
+  /* COMPANY SELECT AUTO-FILL */
+  const companySelect = document.getElementById('companySelect');
+  if (companySelect) {
+    companySelect.addEventListener('change', function() {
+      const companyInput = document.querySelector('input[name="company"]');
+      if (this.value) {
+        companyInput.value = this.options[this.selectedIndex].text;
+        companyInput.readOnly = true;
+        companyInput.style.opacity = '0.6';
+      } else {
+        companyInput.readOnly = false;
+        companyInput.style.opacity = '1';
+        companyInput.value = '';
+      }
+    });
   }
-
-});
 </script>
 
 </body>

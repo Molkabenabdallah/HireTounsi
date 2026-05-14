@@ -431,7 +431,41 @@ $progress = intval(($completed / $total) * 100);
     <!-- User pill -->
     <div class="sidebar-bottom">
       <div class="user-pill">
-        <div class="avatar-sm"><?= $initials ?></div>
+
+
+
+
+
+
+
+
+
+
+  <div class="avatar-sm">
+  <?php if (!empty($userData['profile_photo'])): ?>
+    <img src="uploads/<?= htmlspecialchars($userData['profile_photo']) ?>" 
+         style="width:100%;height:100%;object-fit:cover;border-radius:9px;">
+  <?php else: ?>
+    <?= $initials ?>
+  <?php endif; ?>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="user-pill-info">
           <div class="upn"><?= $userName ?></div>
           <div class="upr">Candidat · Membre depuis <?= $joinDate ?></div>
@@ -459,7 +493,35 @@ $progress = intval(($completed / $total) * 100);
       </div>
       <div class="topbar-right">
         <a href="logout.php" class="topbar-logout">Déconnexion</a>
-        <div class="avatar-lg"><?= $initials ?></div>
+
+
+
+
+
+
+
+
+
+    <div class="avatar-lg">
+  <?php if (!empty($userData['profile_photo'])): ?>
+    <img src="uploads/<?= htmlspecialchars($userData['profile_photo']) ?>" 
+         style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+  <?php else: ?>
+    <?= $initials ?>
+  <?php endif; ?>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
       </div>
     </div>
 
@@ -504,14 +566,14 @@ $progress = intval(($completed / $total) * 100);
           <div class="stat-val">0</div>
           <div class="stat-sub">Complétez votre profil</div>
         </div>
-        <div class="stat-card">
+       <!-- <div class="stat-card">
           <div class="stat-top">
             <span class="stat-label">Entretiens</span>
             <div class="stat-icon si-orange">📅</div>
           </div>
           <div class="stat-val">0</div>
           <div class="stat-sub">Aucun entretien planifié</div>
-        </div>
+        </div>-->
       </div>
 
       <!-- Two col -->

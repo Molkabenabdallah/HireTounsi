@@ -20,6 +20,11 @@ $userId = $_SESSION["user_id"];
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id=?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
+$userPhoto = $user['profile_photo'] ?? null;
+
+
+
+
 
 $userName = htmlspecialchars($user["name"]);
 $initials = strtoupper(substr($userName, 0, 1));
@@ -448,7 +453,7 @@ $myJobs = $stmt->fetchAll();
         <a href="mes_offres.php" class="nav-item">
           <span class="nav-icon">📋</span> Mes offres
         </a>
-        <a href="#" class="nav-item">
+        <a href="candidatures_recues.php" class="nav-item">
           <span class="nav-icon">👥</span> Candidatures reçues
         </a>
       <?php else: ?>
@@ -473,7 +478,37 @@ $myJobs = $stmt->fetchAll();
     <!-- User pill -->
     <div class="sidebar-bottom">
       <div class="user-pill">
-        <div class="avatar-sm"><?= $initials ?></div>
+
+
+
+
+
+
+
+
+  <div class="avatar-sm">
+  <?php if (!empty($userPhoto)): ?>
+    <img src="uploads/<?= htmlspecialchars($userPhoto) ?>" 
+         style="width:100%;height:100%;border-radius:9px;object-fit:cover;">
+  <?php else: ?>
+    <?= $initials ?>
+  <?php endif; ?>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="user-pill-info">
           <div class="upn"><?= $userName ?></div>
           <div class="upr">Recruteur · Membre depuis <?= $joinDate ?></div>
@@ -501,8 +536,46 @@ $myJobs = $stmt->fetchAll();
       </div>
       <div class="topbar-right">
         <a href="logout.php" class="topbar-logout">Déconnexion</a>
-        <div class="avatar-lg"><?= $initials ?></div>
+
+
+
+
+
+
+
+
+
+
+
+       <div class="avatar-lg">
+  <?php if (!empty($userPhoto)): ?>
+    <img src="uploads/<?= htmlspecialchars($userPhoto) ?>" 
+         style="width:100%;height:100%;border-radius:10px;object-fit:cover;">
+  <?php else: ?>
+    <?= $initials ?>
+  <?php endif; ?>
+</div>
+
+
+
+
+
+
+
+
+
+
+
       </div>
+
+
+
+
+
+
+
+
+
     </div>
 
     <!-- Content -->
@@ -565,14 +638,14 @@ $myJobs = $stmt->fetchAll();
           <div class="stat-val"><?= $totalViews ?></div>
           <div class="stat-sub">Sur vos offres</div>
         </div>
-        <div class="stat-card">
+         <!-- <div class="stat-card">
           <div class="stat-top">
             <span class="stat-label">Entretiens</span>
             <div class="stat-icon si-orange">📅</div>
           </div>
           <div class="stat-val"><?= $totalInterviews ?></div>
           <div class="stat-sub">Planifiés</div>
-        </div>
+        </div>-->
       </div>
 
       <!-- Two col -->

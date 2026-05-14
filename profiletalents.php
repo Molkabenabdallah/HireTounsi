@@ -1,4 +1,5 @@
 <?php
+session_start();
 include "config.php";
 
 if (!isset($_GET["id"])) {
@@ -16,6 +17,39 @@ $talent = $stmt->fetch();
 if (!$talent) {
     die("Talent introuvable");
 }
+
+// Check if user is logged in
+$isLoggedIn = isset($_SESSION["user_id"]);
+
+// Get talent user info for email and user_id
+$talentUser = null;
+if (!empty($talent["user_id"])) {
+    $userStmt = $pdo->prepare("SELECT id, email, name, avatar_path, role FROM users WHERE id = ?");
+    $userStmt->execute([$talent["user_id"]]);
+    $talentUser = $userStmt->fetch();
+}
+
+// Determine contact email and user_id
+$talentEmail = $talent["email"] ?? ($talentUser["email"] ?? "");
+$talentUserId = $talent["user_id"] ?? ($talentUser["id"] ?? 0);
+$talentName = $talent["name"] ?? ($talentUser["name"] ?? "Talent");
+
+function getInitials($name) {
+    $parts = explode(' ', $name);
+    $initials = '';
+    foreach ($parts as $part) {
+        $initials .= strtoupper(substr($part, 0, 1));
+    }
+    return substr($initials, 0, 2);
+}
+
+function getAvatarColor($name) {
+    $colors = ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981', '#ec4899', '#6366f1'];
+    $hash = array_sum(array_map('ord', str_split($name)));
+    return $colors[$hash % count($colors)];
+}
+
+$avatarColor = getAvatarColor($talentName);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -46,7 +80,6 @@ body {
   min-height:100vh; overflow-x:hidden;
 }
 
-/* glows */
 body::before {
   content:''; position:fixed; top:-200px; right:-150px;
   width:600px; height:600px; border-radius:50%;
@@ -99,7 +132,6 @@ nav {
   display:flex; flex-direction:column; gap:14px;
 }
 
-/* profile card */
 .profile-card {
   background:var(--s2); border:1px solid var(--border);
   border-radius:20px; padding:28px; text-align:center;
@@ -143,7 +175,6 @@ nav {
 
 .divider { height:1px; background:var(--border); margin:18px 0; }
 
-/* info rows */
 .info-row {
   display:flex; align-items:flex-start; gap:10px;
   text-align:left; margin-bottom:12px;
@@ -157,7 +188,6 @@ nav {
 .info-label { font-size:10px; color:var(--muted2); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
 .info-val { font-size:13px; font-weight:600; }
 
-/* actions */
 .actions {
   display:flex; gap:8px; margin-top:4px;
 }
@@ -176,17 +206,6 @@ nav {
   font-family:'Instrument Sans',sans-serif; font-weight:600; font-size:13px; transition:.2s;
 }
 .btn-secondary:hover { border-color:rgba(139,92,246,.4); color:var(--accent); }
-
-/* sidebar bottom card */
-.sidebar-meta {
-  background:var(--s2); border:1px solid var(--border);
-  border-radius:16px; padding:18px;
-  animation:up .4s ease both; animation-delay:.07s;
-}
-.sidebar-meta-title {
-  font-family:'Cabinet Grotesk',sans-serif;
-  font-weight:800; font-size:13px; letter-spacing:-.2px; margin-bottom:14px;
-}
 
 /* ════════════════════════════════
    CONTENT
@@ -215,10 +234,8 @@ nav {
   font-size:18px; font-weight:900; letter-spacing:-.4px;
 }
 
-/* about */
 .about { font-size:14px; line-height:1.8; color:#c4bfd8; }
 
-/* skills */
 .skills { display:flex; flex-wrap:wrap; gap:8px; }
 .skill {
   padding:6px 14px; border-radius:8px;
@@ -227,7 +244,6 @@ nav {
 }
 .skill:hover { background:rgba(139,92,246,.2); border-color:rgba(139,92,246,.5); }
 
-/* timeline */
 .timeline { display:flex; flex-direction:column; gap:12px; }
 .timeline-item {
   padding:18px; border-radius:14px;
@@ -246,7 +262,6 @@ nav {
 }
 .tl-content p { font-size:13px; color:var(--muted); line-height:1.6; }
 
-/* contact grid */
 .contact-grid {
   display:grid; grid-template-columns:1fr 1fr; gap:12px;
 }
@@ -261,9 +276,7 @@ nav {
 }
 .contact-box b { font-size:14px; font-weight:600; }
 
-@keyframes up {
-  from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)}
-}
+@keyframes up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
 @media(max-width:900px) {
   .wrapper { grid-template-columns:1fr; }
@@ -289,11 +302,11 @@ nav {
 
     <div class="profile-card">
 
-      <div class="avatar">
+      <div class="avatar" style="background:<?= $avatarColor ?>">
         <?php if(!empty($talent["photo"])): ?>
           <img src="uploads/<?= htmlspecialchars($talent["photo"]) ?>" alt="photo">
         <?php else: ?>
-          <?= strtoupper(substr($talent["name"],0,2)) ?>
+          <?= getInitials($talent["name"]) ?>
         <?php endif; ?>
       </div>
 
@@ -344,11 +357,19 @@ nav {
       <div class="divider"></div>
 
       <div class="actions">
-        <a href="#" class="btn-primary">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
-          Contacter
-        </a>
-        <a href="#" class="btn-secondary">
+        <?php if ($talentUserId > 0): ?>
+          <!-- LIEN DIRECT vers chat.php - PAS de formulaire, PAS de JS qui intercepte -->
+          <a href="messaging.php?user=<?= $talentUserId ?>" class="btn-primary" id="contactLink">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Contacter
+          </a>
+        <?php else: ?>
+          <button type="button" class="btn-primary" onclick="alert('Ce talent n\'a pas encore de compte utilisateur lié.')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Contacter
+          </button>
+        <?php endif; ?>
+        <a href="#" class="btn-secondary" onclick="window.print();return false;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           CV
         </a>
@@ -361,7 +382,6 @@ nav {
   <!-- ════ CONTENT ════ -->
   <div class="content">
 
-    <!-- À propos -->
     <div class="section">
       <div class="section-header">
         <div class="section-icon">
@@ -374,7 +394,6 @@ nav {
       </div>
     </div>
 
-    <!-- Compétences -->
     <div class="section">
       <div class="section-header">
         <div class="section-icon">
@@ -393,7 +412,6 @@ nav {
       </div>
     </div>
 
-    <!-- Expérience -->
     <div class="section">
       <div class="section-header">
         <div class="section-icon">
@@ -414,7 +432,6 @@ nav {
       </div>
     </div>
 
-    <!-- Contact -->
     <div class="section">
       <div class="section-header">
         <div class="section-icon">
@@ -444,6 +461,19 @@ nav {
 
   </div>
 </div>
+
+<!-- Script minimal pour s'assurer que le lien fonctionne -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const contactLink = document.getElementById('contactLink');
+  if (contactLink) {
+    contactLink.addEventListener('click', function(e) {
+      // Ne rien faire de spécial, laisse le lien fonctionner normalement
+      console.log('Redirection vers:', this.href);
+    });
+  }
+});
+</script>
 
 </body>
 </html>

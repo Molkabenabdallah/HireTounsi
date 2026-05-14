@@ -68,7 +68,7 @@ body {
 
         <div class="card">
             <h3><?= $job["title"] ?></h3>
-            <p><?= $job["company"] ?> - <?= $job["location"] ?></p>
+            <p><?= $job["company"] ?> - <?= $job["city"] ?></p>
 
             <p><?= substr($job["description"], 0, 100) ?>...</p>
 

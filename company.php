@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     /* IMAGE */
     $logo = "";
+    $cover = "";
 
     if (!empty($_FILES["logo"]["name"])) {
 
@@ -41,6 +42,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         );
     }
 
+
+
+
+
+
+    /* COVER PHOTO */
+if (!empty($_FILES["cover"]["name"])) {
+
+    $cover = time() . "_" . basename($_FILES["cover"]["name"]);
+
+    move_uploaded_file(
+        $_FILES["cover"]["tmp_name"],
+        "uploads/" . $cover
+    );
+}
+
     /* INSERT */
     $stmt = $pdo->prepare("
         INSERT INTO companies
@@ -50,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             sector,
             description,
             logo,
+            cover,
             website,
             fiscal_number,
             company_size,
@@ -78,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?,
             ?,
             ?,
+            ?,
             'pending'
         )
     ");
@@ -88,6 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sector,
         $description,
         $logo,
+        $cover,
         $website,
         $fiscal,
         $size,
@@ -246,6 +266,8 @@ main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:40
   border-radius:20px; overflow:hidden;
   transition:.25s cubic-bezier(.4,0,.2,1);
   animation:up .45s ease both;
+   display:flex;
+  flex-direction:column;
 }
 .card:nth-child(1){animation-delay:.05s}
 .card:nth-child(2){animation-delay:.10s}
@@ -253,10 +275,26 @@ main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:40
 .card:nth-child(4){animation-delay:.20s}
 .card:hover { transform:translateY(-4px); border-color:rgba(139,92,246,.4); box-shadow:0 16px 40px rgba(0,0,0,.4); }
 
-.card-banner {
-  height:100px; position:relative;
-  background:linear-gradient(135deg,#3b1fa8,#8b5cf6,#06b6d4);
+.card-banner{
+  height:100px;
+  position:relative;
+  overflow:hidden;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 .card-logo {
   width:64px; height:64px; border-radius:16px;
@@ -268,7 +306,12 @@ main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:40
 }
 .card-logo img { width:100%; height:100%; object-fit:cover; }
 
-.card-body { padding:44px 20px 20px; }
+.card-body{
+  padding:44px 20px 20px;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
 
 .company-name {
   font-family:'Cabinet Grotesk',sans-serif;
@@ -303,14 +346,22 @@ main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:40
 .modal.active { display:flex; }
 
 .modal-box {
-  width:100%; max-width:760px; max-height:92vh;
-  background:var(--s2); border:1px solid var(--border);
+  width:100%;
+  max-width:760px;
+  max-height:92vh;
+
+  background:var(--s2);
+  border:1px solid var(--border);
   border-radius:24px;
+
   animation:modalIn .35s cubic-bezier(.4,0,.2,1);
   box-shadow:0 32px 80px rgba(0,0,0,.7);
-  display:flex; flex-direction:column;
-}
 
+  display:flex;
+  flex-direction:column;
+
+  overflow:hidden;
+}
 @keyframes modalIn {
   from{opacity:0;transform:translateY(24px) scale(.97)}
   to{opacity:1;transform:translateY(0) scale(1)}
@@ -362,7 +413,19 @@ main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:40
 .pbar-wrap { display:none; }
 
 /* form area */
-.form-area { padding:24px 28px; flex:1; overflow-y:auto; min-height:0; }
+.form-area {
+  padding:24px 28px;
+  flex:1;
+  overflow-y:auto;
+}
+
+
+
+.modal-footer{
+  background:var(--s2);
+  position:sticky;
+  bottom:0;
+}
 
 .form-step { display:none; }
 .form-step.active { display:block; animation:up .3s ease both; }
@@ -476,6 +539,117 @@ select option { background:var(--s2); }
 @keyframes up {
   from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}
 }
+
+
+
+.card-actions{
+  margin-top:20px;
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+
+.btn-view{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:46px;
+  padding:12px 16px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),#7c3aed);
+  transition:.25s;
+  box-shadow:0 4px 14px rgba(139,92,246,.25);
+}
+
+.btn-view:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(139,92,246,.45);
+}
+
+.btn-view:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(139,92,246,.45);
+}
+
+
+
+
+
+
+
+
+/* ───────── LAYOUT ───────── */
+
+.companies-layout{
+  display:flex;
+  gap:24px;
+  align-items:flex-start;
+}
+
+/* SIDEBAR */
+
+.filters-sidebar{
+  width:260px;
+  flex-shrink:0;
+  position:sticky;
+  top:90px;
+}
+
+.filter-box{
+  background:var(--s2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.filter-box h3{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:16px;
+  margin-bottom:14px;
+}
+
+/* GRID */
+
+.grid{
+  flex:1;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:18px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+  .companies-layout{
+    flex-direction:column;
+  }
+
+  .filters-sidebar{
+    width:100%;
+    position:relative;
+    top:0;
+  }
+
+}
+
+
+
+
+
+
+
+.company-size{
+  font-size:13px;
+  color:var(--a2);
+  margin-bottom:12px;
+  font-weight:600;
+}
 </style>
 </head>
 <body>
@@ -542,36 +716,188 @@ select option { background:var(--s2); }
   </div>
 
   <?php else: ?>
-  <div class="grid">
-    <?php foreach($companies as $c): ?>
-    <div class="card">
-      <div class="card-banner">
-        <div class="card-logo">
-          <?php if(!empty($c["logo"])): ?>
-            <img src="uploads/<?= htmlspecialchars($c["logo"]) ?>" alt="logo">
-          <?php else: ?>
-            <?= strtoupper(substr($c["name"], 0, 1)) ?>
-          <?php endif; ?>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="company-name"><?= htmlspecialchars($c["name"]) ?></div>
-        <div class="company-sector"><?= htmlspecialchars($c["sector"] ?? '') ?></div>
-        <div class="card-meta">
-          <span class="status-badge s-<?= $c["status"] ?>">
-            <span class="sdot"></span><?= ucfirst($c["status"]) ?>
-          </span>
-          <?php if(!empty($c["location"])): ?>
-          <span class="card-location">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            <?= htmlspecialchars($c["location"]) ?>
-          </span>
-          <?php endif; ?>
-        </div>
-      </div>
+
+<div class="companies-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="filters-sidebar">
+
+    <div class="filter-box">
+      <h3>Recherche</h3>
+
+      <input type="text" id="searchInput" placeholder="Nom entreprise...">
     </div>
+
+    <div class="filter-box">
+      <h3>Secteur</h3>
+
+      <select id="sectorFilter">
+        <option value="">Tous</option>
+
+        <?php
+        $sectors = [];
+
+        foreach($companies as $c){
+          if(!empty($c["sector"])){
+            $sectors[] = $c["sector"];
+          }
+        }
+
+        $sectors = array_unique($sectors);
+
+        foreach($sectors as $sector):
+        ?>
+          <option value="<?= htmlspecialchars($sector) ?>">
+            <?= htmlspecialchars($sector) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+    <div class="filter-box">
+      <h3>Ville</h3>
+
+      <select id="locationFilter">
+        <option value="">Toutes</option>
+
+        <?php
+        $locations = [];
+
+        foreach($companies as $c){
+          if(!empty($c["location"])){
+            $locations[] = $c["location"];
+          }
+        }
+
+        $locations = array_unique($locations);
+
+        foreach($locations as $loc):
+        ?>
+          <option value="<?= htmlspecialchars($loc) ?>">
+            <?= htmlspecialchars($loc) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+
+
+
+
+
+
+    <div class="filter-box">
+  <h3>Effectif</h3>
+
+  <select id="sizeFilter">
+    <option value="">Tous</option>
+
+    <?php
+    $sizes = [];
+
+    foreach($companies as $c){
+      if(!empty($c["company_size"])){
+        $sizes[] = $c["company_size"];
+      }
+    }
+
+    $sizes = array_unique($sizes);
+
+    foreach($sizes as $size):
+    ?>
+      <option value="<?= htmlspecialchars($size) ?>">
+        <?= htmlspecialchars($size) ?>
+      </option>
     <?php endforeach; ?>
+  </select>
+</div>
+
+  </aside>
+
+ <!-- GRID -->
+<div class="grid" id="companiesGrid">
+
+<?php foreach($companies as $c): ?>
+
+<div class="card">
+
+<!-- ══ CARD BANNER (CORRIGÉ) ══ -->
+<div class="card-banner" style="
+  <?php
+  echo !empty($c['cover'])
+    ? "background-image:url('uploads/" . htmlspecialchars($c['cover']) . "');"
+    : "background:linear-gradient(135deg,#3b1fa8,#8b5cf6,#06b6d4);";
+  ?>
+">
+  <div class="card-logo">
+    <?php if(!empty($c["logo"])): ?>
+      <img src="uploads/<?= htmlspecialchars($c["logo"]) ?>" alt="logo">
+    <?php else: ?>
+      <?= strtoupper(substr($c["name"], 0, 1)) ?>
+    <?php endif; ?>
   </div>
+</div>
+
+  <div class="card-body">
+
+    <div class="company-name">
+      <?= htmlspecialchars($c["name"]) ?>
+    </div>
+
+    <div class="company-sector">
+      <?= htmlspecialchars($c["sector"] ?? '') ?>
+    </div>
+
+
+
+
+
+
+    <?php if(!empty($c["company_size"])): ?>
+
+<div class="company-size">
+  👥 <?= htmlspecialchars($c["company_size"]) ?>
+</div>
+
+<?php endif; ?>
+
+    <div class="card-meta">
+
+      <span class="status-badge s-<?= $c["status"] ?>">
+        <span class="sdot"></span>
+        <?= ucfirst($c["status"]) ?>
+      </span>
+
+      <?php if(!empty($c["location"])): ?>
+
+      <span class="card-location">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+
+        <?= htmlspecialchars($c["location"]) ?>
+      </span>
+
+      <?php endif; ?>
+
+    </div>
+
+    <div class="card-actions">
+
+      <a href="company_details.php?id=<?= $c['id'] ?>" class="btn-view">
+        Voir l'entreprise
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<?php endforeach; ?>
+
+</div>
   <?php endif; ?>
 
 </main>
@@ -630,6 +956,15 @@ select option { background:var(--s2); }
           </div>
         </div>
       </div>
+
+
+
+
+      <div class="field">
+  <label>Cover Photo</label>
+
+  <input type="file" name="cover" accept="image/*">
+</div>
 
       <div class="field">
         <label>Nom de l'entreprise *</label>
@@ -799,6 +1134,58 @@ document.getElementById('logoInput').addEventListener('change', function() {
   };
   reader.readAsDataURL(file);
 });
+
+
+
+/* ───────── FILTERS ───────── */
+
+const searchInput = document.getElementById("searchInput");
+const sectorFilter = document.getElementById("sectorFilter");
+const locationFilter = document.getElementById("locationFilter");
+const sizeFilter = document.getElementById("sizeFilter");
+
+function filterCompanies(){
+
+  const search = searchInput.value.toLowerCase();
+  const sector = sectorFilter.value.toLowerCase();
+  const location = locationFilter.value.toLowerCase();
+
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card => {
+
+    const name = card.querySelector(".company-name").textContent.toLowerCase();
+    const companySector = card.querySelector(".company-sector").textContent.toLowerCase();
+
+    let companyLocation = "";
+    const locationElement = card.querySelector(".card-location");
+
+    if(locationElement){
+      companyLocation = locationElement.textContent.toLowerCase();
+    }
+
+    const matchSearch =
+      name.includes(search);
+
+    const matchSector =
+      !sector || companySector.includes(sector);
+
+    const matchLocation =
+      !location || companyLocation.includes(location);
+
+    if(matchSearch && matchSector && matchLocation){
+      card.style.display = "block";
+    }else{
+      card.style.display = "none";
+    }
+
+  });
+
+}
+
+searchInput.addEventListener("input", filterCompanies);
+sectorFilter.addEventListener("change", filterCompanies);
+locationFilter.addEventListener("change", filterCompanies);
 </script>
 
 </body>
