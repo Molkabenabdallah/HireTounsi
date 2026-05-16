@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 14 mai 2026 à 17:09
+-- Généré le : sam. 16 mai 2026 à 20:08
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -45,14 +45,9 @@ CREATE TABLE `applications` (
 --
 
 INSERT INTO `applications` (`id`, `user_id`, `job_id`, `cv`, `cover_letter`, `has_experience`, `experience_years`, `availability`, `status`, `created_at`) VALUES
-(2, 11, 12, '1778327677_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-09 11:54:37'),
-(3, 11, 10, '1778327815_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-09 11:56:55'),
-(4, 11, 7, '1778328383_cvvvvvvvvv.pdf', 'lllllllllllll', 1, '1-3', 'llllllll', 'pending', '2026-05-09 12:06:23'),
-(5, 10, 10, '1778330255_cvvvvvvvvv.pdf', 'cc', 1, '5+', 'cc', 'pending', '2026-05-09 12:37:35'),
 (6, 11, 9, '1778331662_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-09 13:01:02'),
 (7, 11, 14, '1778333831_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-09 13:37:11'),
 (8, 11, 4, '1778443912_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-10 20:11:52'),
-(9, 11, 11, '1778574131_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-12 08:22:11'),
 (10, 14, 7, '1778585517_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-12 11:31:57'),
 (11, 10, 15, '1778663326_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-13 09:08:46'),
 (12, 11, 15, '1778663365_cvvvvvvvvv.pdf', NULL, 0, NULL, NULL, 'pending', '2026-05-13 09:09:25'),
@@ -124,23 +119,9 @@ INSERT INTO `companies` (`id`, `user_id`, `name`, `city`, `sector`, `description
 (16, 10, 'Business Solutions', NULL, 'Commerce', 'BUSINESS SOLUTIONS est un cabinet de consulting, Formation continue et de recrutement.\r\n', 'https/Business Solutions.com', '', '1-10 employés', 'Tunisie', 'tunis', 'molka ben abdallah', '50307222', 'molka@gmail.com', 'RH Manager', '1778746062_Capture d\'écran 2026-05-13 160214.png', 'approved', '2026-05-14 08:07:42', NULL),
 (17, 11, 'MOLKAAAAAAAAAAAAA', NULL, 'commerce', 'MOLKAAAAAAAAAAAAAAAAAAAAAAA', 'https/molka.com', '25874B', '10-50 employés', 'Tunisie', 'tunis', 'molka ben abdallah', '50307222', 'molka@gmail.com', 'MOLKA MANAGER', '1778767236_Capture d\'écran 2026-05-14 122338.png', 'approved', '2026-05-14 14:00:36', '1778767236_Capture d\'écran 2026-05-14 122338.png'),
 (18, 11, 'BUSSNES', NULL, 'finance', 'BUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNESBUSSNES', 'https/Business Solutions.com', '54236F', '10-50 employés', 'Tunisie', 'tunis', 'molka ben abdallah', '50307222', 'molka@gmail.com', 'RH Manager', '1778767772_Capture d\'écran 2026-05-14 122338.png', 'approved', '2026-05-14 14:09:32', '1778767772_Capture d\'écran 2026-05-13 160214.png'),
-(20, 11, 'hiretounsi', NULL, 'TECH', 'hiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsi', 'https/molka.com', '54236Fa', '50-200 employés', 'Tunisie', 'tunis', 'molka ben abdallahhhh', '25632541547', 'molka@gmail.com', 'MOLKA MANAGERrrrr', '1778770689_Gemini_Generated_Image_yvp7idyvp7idyvp7.png', 'approved', '2026-05-14 14:58:09', '1778770689_Gemini_Generated_Image_yvp7idyvp7idyvp7.png');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `conversations`
---
-
-CREATE TABLE `conversations` (
-  `id` int(11) NOT NULL,
-  `user1_id` int(11) NOT NULL,
-  `user2_id` int(11) NOT NULL,
-  `last_message` text DEFAULT NULL,
-  `last_message_at` timestamp NULL DEFAULT NULL,
-  `unread_count_user1` int(11) DEFAULT 0,
-  `unread_count_user2` int(11) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(20, 11, 'hiretounsi', NULL, 'TECH', 'hiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsihiretounsi', 'https/molka.com', '54236Fa', '50-200 employés', 'Tunisie', 'tunis', 'molka ben abdallahhhh', '25632541547', 'molka@gmail.com', 'MOLKA MANAGERrrrr', '1778770689_Gemini_Generated_Image_yvp7idyvp7idyvp7.png', 'approved', '2026-05-14 14:58:09', '1778770689_Gemini_Generated_Image_yvp7idyvp7idyvp7.png'),
+(21, 11, 'ENTREPRISE', NULL, 'TECH', 'ENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISEENTREPRISE', 'https/molka.com', '54236Fa', '10-50 employés', 'Tunisie', 'tunis', 'molka ben abdallah', '50307222', 'molkaa@gmail.com', 'MOLKA MANAGERR', '1778775667_Gemini_Generated_Image_29od8v29od8v29od.png', 'approved', '2026-05-14 16:21:07', '1778775667_Gemini_Generated_Image_29od8v29od8v29od.png'),
+(22, 11, 'test final', NULL, 'Commerce', 'test finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest final', 'https/molka.com', '25874BA', '10-50 employés', 'Tunisie', 'tunis', 'molka ben abdallah', '50307222', 'molka@gmail.com', 'MOLKA MANAGERRRRRRRRRRRRRRRRR', '1778791828_Capture d\'écran 2026-04-29 162323.png', 'approved', '2026-05-14 20:50:28', '1778791828_Gemini_Generated_Image_yvp7idyvp7idyvp7.png');
 
 -- --------------------------------------------------------
 
@@ -199,23 +180,10 @@ INSERT INTO `jobs` (`id`, `title`, `company`, `salary`, `salary_max`, `city`, `d
 (29, 'Embedded Software Developer  ', 'BUSINESS SOLUTIONS', '1200', '1500', 'sousse', '▪️ Développement C/C++ sur microcontrôleurs\r\n▪️ Intégration & optimisation firmware\r\n▪️ Tests unitaires & validation système', '2026-05-14 08:23:50', 'approved', 18, 'CDI', 'Développement', 'Senior', 'company', 0, '', '[]', NULL),
 (30, 'Embedded Software Developer  2', 'BUSINESS SOLUTIONS', '1000', '1500', 'Sousse', '▪️ Développement C/C++ sur microcontrôleurs\r\n▪️ Intégration & optimisation firmware\r\n▪️ Tests unitaires & validation système', '2026-05-14 08:29:08', 'approved', 18, 'CDI', 'Développement', 'Senior', 'company', 0, '', '[]', NULL),
 (31, 'OFFRE TEST COMPANY DETAILS', 'OFFRE TEST DETAILS', '1000', '1500', 'tunis', 'OFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILSOFFRE TEST COMPANY DETAILS', '2026-05-14 10:25:07', 'approved', 18, 'CDI', 'Finance', 'Senior', 'company', 0, '', '[]', NULL),
-(32, 'molka offre 1', 'molka', '1200', '1500', 'tunis', 'molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1', '2026-05-14 12:06:10', 'approved', 11, 'CDD', 'Design', 'Senior', 'company', 0, '', '[]', NULL);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `messages`
---
-
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL,
-  `sender_id` int(11) NOT NULL,
-  `receiver_id` int(11) NOT NULL,
-  `job_id` int(11) DEFAULT NULL,
-  `content` text NOT NULL,
-  `is_read` tinyint(1) DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(32, 'molka offre 1', 'molka', '1200', '1500', 'tunis', 'molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1molka offre 1', '2026-05-14 12:06:10', 'approved', 11, 'CDD', 'Design', 'Senior', 'company', 0, '', '[]', NULL),
+(33, 'test entreprsie', 'test', '1000', '1000', 'tunis', 'test entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsietest entreprsie', '2026-05-14 19:28:43', 'approved', 11, 'Freelance', 'Marketing', 'Junior', 'company', 0, '', '[]', NULL),
+(34, 'test final', 'test final', '1000', '1500', 'tunis', 'test finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest finaltest final', '2026-05-14 20:52:02', 'approved', 11, 'CDI', 'Vente & Commercial', 'Intermédiaire', '', 0, '', '[]', 22),
+(35, 'test final 2', 'test final', '1800', '20000', '', 'test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2test final 2', '2026-05-14 20:55:28', 'approved', 11, 'Freelance', 'Design', 'Intermédiaire', '', 0, '', '[]', 22);
 
 -- --------------------------------------------------------
 
@@ -253,7 +221,9 @@ INSERT INTO `talents` (`id`, `name`, `skill`, `description`, `status`, `user_id`
 (11, 'wael', 'react', 'test', 'approved', 10, NULL, NULL, NULL, NULL),
 (12, 'molka', 'PHP', 'Je suis Graphic Designer, spécialisé en branding, motion design, vidéographie et photographie. J’aime créer des visuels qui ont du sens, pas juste quelque chose de beau, mais quelque chose qui représente vraiment une idée ou une identité.\r\nJe travaille beaucoup sur les détails : les couleurs, la typographie, le rythme dans les animations… tout ce qui peut faire la différence dans un projet. En motion design, j’essaie de donner vie aux concepts de manière simple et efficace. En photo et vidéo, je cherche surtout à capturer quelque chose d’authentique, pas trop “forcé”.\r\nJe suis quelqu’un de curieux, j’aime apprendre, tester de nouvelles choses et m’améliorer à chaque projet. Même si je suis encore au début en termes d’expérience professionnelle, je prends chaque travail au sérieux et je m’investis vraiment dedans.\r\nMon objectif est simple : proposer un travail propre, créatif, et qui correspond vraiment à ce que vous cherchez. Et surtout, apporter ma touche personnelle tout en respectant votre vision.', 'approved', 11, 'benabdallahmolka13@gmail.com', '+21650307222', 'tunis', '1778490125_WhatsApp Image 2026-03-29 at 15.31.38.jpeg'),
 (13, 'wael', 'ui ux react  wael', 'waelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwaelwael', 'approved', 16, 'wael@gmail.com', '52369874', 'tunis', '1778681976_Capture d\'écran 2026-05-13 160214.png'),
-(14, 'NOM COMPLET', 'PHP MONGODB', 'NOMCOMPLET', 'approved', 11, 'NOM@GMAIL.COM', '12342587', 'sfax', '1778761298_Capture d\'écran 2026-05-14 122338.png');
+(14, 'NOM COMPLET', 'PHP MONGODB', 'NOMCOMPLET', 'approved', 11, 'NOM@GMAIL.COM', '12342587', 'sfax', '1778761298_Capture d\'écran 2026-05-14 122338.png'),
+(15, 'tester message', 'PHP', 'tester message', 'approved', 11, 'benabdallahmolka13@gmail.com', '+21650307222', 'tunis', '1778786575_WhatsApp Image 2026-03-29 at 15.31.38.jpeg'),
+(16, 'talent wael', 'designer', 'designer', 'approved', 16, 'wael@gmail.com', '20254147', 'tunis', '1778871979_1f60c.webp');
 
 -- --------------------------------------------------------
 
@@ -276,20 +246,21 @@ CREATE TABLE `users` (
   `role` enum('candidat','recruteur','both','admin') DEFAULT 'candidat',
   `is_recruiter` tinyint(1) DEFAULT 0,
   `profile_photo` varchar(255) DEFAULT NULL,
-  `cv` varchar(255) DEFAULT NULL
+  `cv` varchar(255) DEFAULT NULL,
+  `last_active` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `bio`, `skills`, `cv_path`, `avatar_path`, `job_title`, `role`, `is_recruiter`, `profile_photo`, `cv`) VALUES
-(10, 'admin', 'admin@gmail.com', '$2y$10$xFPITaAIOh8kGobjdvfs5.dCN.67H4CfYz9bWp43XisjWH8eOauii', '2026-05-02 14:58:45', NULL, NULL, 'ui/ux', NULL, NULL, NULL, 'admin', 0, '1777900608_Gemini_Generated_Image_k09pask09pask09p.png', '1777900608_Capture d\'écran 2026-05-04 130727.png'),
-(11, 'ben abdallah molka', 'benabdallahmolka13@gmail.com', '$2y$10$VaPfsT1HBMaeI8Paa1ZNqutbMHuFH1aSt/dWltGlEjVlTH1OFbodS', '2026-05-04 09:19:21', '+21650307222', 'php dev', 'php', NULL, NULL, 'ui ux', 'both', 0, '1778764663_Capture d\'écran 2026-05-14 122338.png', '1778321317_cvvvvvvvvv.pdf'),
-(14, 'molka ben abdallahh', 'molka@gmail.com', '$2y$10$RrgIIIwcfAvoNwp1rKEocO3nO7Pl5HvvPDOLBlX5ZBphGVpszGk3y', '2026-05-12 11:30:04', NULL, NULL, NULL, NULL, NULL, NULL, 'both', 0, NULL, NULL),
-(15, 'ben abdallah', 'benab@gmail.com', '$2y$10$8fl4xuzacL/tLIPXnZ7EA.ppHaVjIHlXTng8tGA8bIgLM8fZA58t.', '2026-05-13 10:54:47', NULL, NULL, NULL, NULL, NULL, NULL, '', 0, NULL, NULL),
-(16, 'wael', 'wael@gmail.com', '$2y$10$EFycrrCU7ig1HPYUQxeqd.a1kOFdM1AE5an8gGTkI79f62PZPzhKu', '2026-05-13 14:17:37', '', 'cc', '', NULL, NULL, '', '', 0, NULL, NULL),
-(18, 'BusinessSolutions', 'BusinessSolutions@gmail.com', '$2y$10$N2LgJNFksaxodwmPVlO/yurZtOjIaH.vpauSwn/0ffKJ6ykjU85DO', '2026-05-14 07:53:29', NULL, NULL, NULL, NULL, NULL, NULL, '', 0, NULL, NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `bio`, `skills`, `cv_path`, `avatar_path`, `job_title`, `role`, `is_recruiter`, `profile_photo`, `cv`, `last_active`) VALUES
+(10, 'admin', 'admin@gmail.com', '$2y$10$xFPITaAIOh8kGobjdvfs5.dCN.67H4CfYz9bWp43XisjWH8eOauii', '2026-05-02 14:58:45', NULL, NULL, 'ui/ux', NULL, NULL, NULL, 'admin', 0, '1777900608_Gemini_Generated_Image_k09pask09pask09p.png', '1777900608_Capture d\'écran 2026-05-04 130727.png', NULL),
+(11, 'ben abdallah molka', 'benabdallahmolka13@gmail.com', '$2y$10$VaPfsT1HBMaeI8Paa1ZNqutbMHuFH1aSt/dWltGlEjVlTH1OFbodS', '2026-05-04 09:19:21', '+21650307222', 'php dev', 'php', NULL, NULL, 'ui ux', 'both', 0, '1778764663_Capture d\'écran 2026-05-14 122338.png', '1778321317_cvvvvvvvvv.pdf', '2026-05-16 10:45:01'),
+(14, 'molka ben abdallahh', 'molka@gmail.com', '$2y$10$RrgIIIwcfAvoNwp1rKEocO3nO7Pl5HvvPDOLBlX5ZBphGVpszGk3y', '2026-05-12 11:30:04', NULL, NULL, NULL, NULL, NULL, NULL, 'both', 0, NULL, NULL, NULL),
+(15, 'ben abdallah', 'benab@gmail.com', '$2y$10$8fl4xuzacL/tLIPXnZ7EA.ppHaVjIHlXTng8tGA8bIgLM8fZA58t.', '2026-05-13 10:54:47', NULL, NULL, NULL, NULL, NULL, NULL, '', 0, NULL, NULL, NULL),
+(16, 'wael', 'wael@gmail.com', '$2y$10$EFycrrCU7ig1HPYUQxeqd.a1kOFdM1AE5an8gGTkI79f62PZPzhKu', '2026-05-13 14:17:37', '', 'cc', '', NULL, NULL, '', 'candidat', 0, '1778864928_Capture d\'écran 2026-05-13 160214.png', NULL, '2026-05-16 10:58:12'),
+(18, 'BusinessSolutions', 'BusinessSolutions@gmail.com', '$2y$10$N2LgJNFksaxodwmPVlO/yurZtOjIaH.vpauSwn/0ffKJ6ykjU85DO', '2026-05-14 07:53:29', NULL, NULL, NULL, NULL, NULL, NULL, '', 0, NULL, NULL, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -314,22 +285,9 @@ ALTER TABLE `companies`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `conversations`
---
-ALTER TABLE `conversations`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_conversation` (`user1_id`,`user2_id`);
-
---
 -- Index pour la table `jobs`
 --
 ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`);
-
---
--- Index pour la table `messages`
---
-ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -365,31 +323,19 @@ ALTER TABLE `candidatures`
 -- AUTO_INCREMENT pour la table `companies`
 --
 ALTER TABLE `companies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT pour la table `conversations`
---
-ALTER TABLE `conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT pour la table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
-
---
--- AUTO_INCREMENT pour la table `messages`
---
-ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT pour la table `talents`
 --
 ALTER TABLE `talents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT pour la table `users`
