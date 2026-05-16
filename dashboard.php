@@ -419,6 +419,10 @@ $progress = intval(($completed / $total) * 100);
       <a href="talents.php" class="nav-item">
         <span class="nav-icon">👥</span> Talents
       </a>
+
+       
+
+
       <span class="nav-sep">Compte</span>
       <a href="#" class="nav-item">
         <span class="nav-icon">💬</span> Messages

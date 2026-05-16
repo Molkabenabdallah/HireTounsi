@@ -353,7 +353,7 @@ nav {
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">Hire<span>Tounsi</span></a>
-  <a href="companies.php" class="back-btn">
+  <a href="company.php" class="back-btn">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="m15 18-6-6 6-6"/>
     </svg>

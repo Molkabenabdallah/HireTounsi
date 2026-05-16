@@ -18,19 +18,16 @@ if (!$talent) {
     die("Talent introuvable");
 }
 
-// Check if user is logged in
-$isLoggedIn = isset($_SESSION["user_id"]);
-
-// Get talent user info for email and user_id
+// Get talent user info for email
 $talentUser = null;
 if (!empty($talent["user_id"])) {
-    $userStmt = $pdo->prepare("SELECT id, email, name, avatar_path, role FROM users WHERE id = ?");
+    $userStmt = $pdo->prepare("SELECT id, email, name, phone FROM users WHERE id = ?");
     $userStmt->execute([$talent["user_id"]]);
     $talentUser = $userStmt->fetch();
 }
 
-// Determine contact email and user_id
 $talentEmail = $talent["email"] ?? ($talentUser["email"] ?? "");
+$talentPhone = $talent["phone"] ?? ($talentUser["phone"] ?? "");
 $talentUserId = $talent["user_id"] ?? ($talentUser["id"] ?? 0);
 $talentName = $talent["name"] ?? ($talentUser["name"] ?? "Talent");
 
@@ -207,6 +204,65 @@ nav {
 }
 .btn-secondary:hover { border-color:rgba(139,92,246,.4); color:var(--accent); }
 
+/* Contact modal */
+.contact-modal-overlay {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;
+}
+.contact-modal-overlay.show { display:flex; }
+.contact-modal {
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:20px; padding:28px; width:90%; max-width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  animation:modalUp .3s ease;
+}
+@keyframes modalUp {
+  from{opacity:0;transform:translateY(20px) scale(.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.contact-modal h3 {
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-weight:800; font-size:18px; margin-bottom:4px;
+}
+.contact-modal p {
+  color:var(--muted); font-size:13px; margin-bottom:20px;
+}
+.contact-option {
+  display:flex; align-items:center; gap:12px;
+  padding:14px; border-radius:12px;
+  background:var(--s); border:1px solid var(--border);
+  margin-bottom:10px; cursor:pointer; transition:.2s;
+  text-decoration:none; color:var(--text);
+}
+.contact-option:hover {
+  border-color:rgba(139,92,246,.3);
+  background:rgba(139,92,246,.06);
+}
+.contact-option-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.2);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--accent); flex-shrink:0;
+}
+.contact-option-info { flex:1; }
+.contact-option-info strong {
+  display:block; font-size:14px; margin-bottom:2px;
+}
+.contact-option-info span {
+  font-size:12px; color:var(--muted);
+}
+.contact-modal-close {
+  width:100%; margin-top:10px; padding:10px;
+  background:transparent; border:1px solid var(--border);
+  color:var(--muted); border-radius:10px; cursor:pointer;
+  font-family:'Instrument Sans',sans-serif; font-size:13px; font-weight:600;
+  transition:.2s;
+}
+.contact-modal-close:hover {
+  color:var(--text); border-color:rgba(139,92,246,.3);
+}
+
 /* ════════════════════════════════
    CONTENT
 ════════════════════════════════ */
@@ -357,18 +413,10 @@ nav {
       <div class="divider"></div>
 
       <div class="actions">
-        <?php if ($talentUserId > 0): ?>
-          <!-- LIEN DIRECT vers chat.php - PAS de formulaire, PAS de JS qui intercepte -->
-          <a href="messaging.php?user=<?= $talentUserId ?>" class="btn-primary" id="contactLink">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Contacter
-          </a>
-        <?php else: ?>
-          <button type="button" class="btn-primary" onclick="alert('Ce talent n\'a pas encore de compte utilisateur lié.')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Contacter
-          </button>
-        <?php endif; ?>
+        <button type="button" class="btn-primary" onclick="openContactModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Contacter
+        </button>
         <a href="#" class="btn-secondary" onclick="window.print();return false;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           CV
@@ -462,16 +510,65 @@ nav {
   </div>
 </div>
 
-<!-- Script minimal pour s'assurer que le lien fonctionne -->
+<!-- ════ CONTACT MODAL ════ -->
+<div class="contact-modal-overlay" id="contactModal" onclick="closeContactModal(event)">
+  <div class="contact-modal" onclick="event.stopPropagation()">
+    <h3>Contacter <?= htmlspecialchars($talentName) ?></h3>
+    <p>Choisissez comment vous souhaitez contacter ce talent.</p>
+
+    <?php if (!empty($talentEmail)): ?>
+    <a href="mailto:<?= htmlspecialchars($talentEmail) ?>" class="contact-option">
+      <div class="contact-option-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="contact-option-info">
+        <strong>Envoyer un email</strong>
+        <span><?= htmlspecialchars($talentEmail) ?></span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 18 6-6-6-6"/></svg>
+    </a>
+    <?php endif; ?>
+
+    <?php if (!empty($talentPhone)): ?>
+    <a href="tel:<?= htmlspecialchars($talentPhone) ?>" class="contact-option">
+      <div class="contact-option-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div class="contact-option-info">
+        <strong>Appeler</strong>
+        <span><?= htmlspecialchars($talentPhone) ?></span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 18 6-6-6-6"/></svg>
+    </a>
+    <?php endif; ?>
+
+    <?php if (empty($talentEmail) && empty($talentPhone)): ?>
+    <div class="contact-option" style="cursor:default; opacity:.6;">
+      <div class="contact-option-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+      </div>
+      <div class="contact-option-info">
+        <strong>Aucun contact disponible</strong>
+        <span>Ce talent n'a pas renseigné ses coordonnées.</span>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <button class="contact-modal-close" onclick="closeContactModal()">Fermer</button>
+  </div>
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const contactLink = document.getElementById('contactLink');
-  if (contactLink) {
-    contactLink.addEventListener('click', function(e) {
-      // Ne rien faire de spécial, laisse le lien fonctionner normalement
-      console.log('Redirection vers:', this.href);
-    });
+function openContactModal() {
+  document.getElementById('contactModal').classList.add('show');
+}
+function closeContactModal(e) {
+  if (!e || e.target.id === 'contactModal') {
+    document.getElementById('contactModal').classList.remove('show');
   }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeContactModal();
 });
 </script>
 
